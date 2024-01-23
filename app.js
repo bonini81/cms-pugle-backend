@@ -1,5 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
 
 const placesRoutes = require("./routes/places-routes");
 const usersRoutes = require("./routes/users-routes");
@@ -21,6 +22,13 @@ app.use((req, res, next) => {
 });
 
 //MiddleWare
-app.use(placesRoutes)
+app.use(placesRoutes);
 
-app.listen(5000);
+mongoose
+.connect(
+    "mongodb+srv://andresdominguez81:et6TE7smQ9bUor1d@pugle.kspxgy8.mongodb.net/?retryWrites=true&w=majority"
+)
+.then(()=>{
+    app.listen(5000);
+})
+.catch( err => console.log(err));

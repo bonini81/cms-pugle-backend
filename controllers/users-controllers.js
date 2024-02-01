@@ -1,4 +1,7 @@
 const HttpError = require("../models/http-error");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+
 const { validationResult } = require("express-validator");
 const User = require("../models/user");
 
@@ -11,6 +14,9 @@ const getUsers = async (req, res, next) => {
         return next(error);
     }
    
+    let token;
+    token = jwt.sign();
+
   res.status(201).json({ users: usersList.map(user => user.toObject({getters: true})) });
 };
 
@@ -37,11 +43,19 @@ if (existingUser) {
     return next(error);
 }
 
+let hashedPassword;
+try {
+    hashedPassword = await bcrypt.hash(password, 12);
+} catch(err) {
+    const error = new HttpError("Could not create user, please try again", 500);
+    return next(error);
+}
+
     const createdUser = new User ({
         name,
         email,
         image: "https://thelaughingcake.com/wp-content/uploads/2023/12/TheLaughingCakePC.png",
-        password
+        password: hashedPassword
     });
 
     try {
@@ -65,12 +79,29 @@ const login = async (req, res, next) => {
         return next(error);
     }
 
-    if(!existingUser || existingUser.password !== password) {
+    if(!existingUser) {
         const error = new HttpError("Invalidad credentials, could not log you in", 401);
         return next(error);
     }
 
-    res.json({message: "Logged In"});
+    let isValidPassword = false;
+    try {
+        isValidPassword = await bcrypt.compare(password, existingUser.password);
+    }
+    catch(err) {
+        const error = new HttpError("Could not log you in, please check your credentials and try again", 500);
+        return next(error);
+    }
+
+    if(!isValidPassword) {
+        const error = new HttpError("Invalidad credentials, could not log you in", 401);
+        return next(error);
+    }
+
+    res.json({
+        message: "Logged In",
+        user: existingUser.toObject({getters: true})
+    });
 };
 
 exports.getUsers = getUsers;

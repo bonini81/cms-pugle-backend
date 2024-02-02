@@ -13,9 +13,6 @@ const getUsers = async (req, res, next) => {
         const error = new HttpError("Fetching users failed, please try again later", 500);
         return next(error);
     }
-   
-    let token;
-    token = jwt.sign();
 
   res.status(201).json({ users: usersList.map(user => user.toObject({getters: true})) });
 };
@@ -65,7 +62,19 @@ try {
         return next(error);
     }
 
-    res.status(201).json({ user: createdUser.toObject({getters: true}) });
+    let token;
+    try {
+    token = jwt.sign(
+        {userId: createdUser.id, email: createdUser.email}, 
+        "supersecret_dont_share", 
+        {expiresIn: "1h" }
+        );
+    } catch(err) {
+        const error = new HttpError("Signing up failed, please try again later", 500);
+        return next(error);
+    }
+
+    res.status(201).json({ user: createdUser.id, email: createdUser.email, token: token });
 };
 
 const login = async (req, res, next) => {
@@ -97,10 +106,23 @@ const login = async (req, res, next) => {
         const error = new HttpError("Invalidad credentials, could not log you in", 401);
         return next(error);
     }
+    
+    let token;
+    try {
+    token = jwt.sign(
+        {userId: existingUser.id, email: existingUser.email}, 
+        "supersecret_dont_share", // this token should be the same as the one on signgup by the way 
+        { expiresIn: "1h" }
+        );
+    } catch(err) {
+        const error = new HttpError("Logging in failed, please try again later", 500);
+        return next(error);
+    }
 
     res.json({
-        message: "Logged In",
-        user: existingUser.toObject({getters: true})
+     userId: existingUser.id,
+     email: existingUser.email,
+     token: token
     });
 };
 

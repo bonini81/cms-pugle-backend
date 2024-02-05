@@ -1,4 +1,7 @@
 const HttpError = require("../models/http-error");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+
 const { validationResult } = require("express-validator");
 const User = require("../models/user");
 
@@ -10,7 +13,7 @@ const getUsers = async (req, res, next) => {
         const error = new HttpError("Fetching users failed, please try again later", 500);
         return next(error);
     }
-   
+
   res.status(201).json({ users: usersList.map(user => user.toObject({getters: true})) });
 };
 
@@ -37,11 +40,19 @@ if (existingUser) {
     return next(error);
 }
 
+let hashedPassword;
+try {
+    hashedPassword = await bcrypt.hash(password, 12);
+} catch(err) {
+    const error = new HttpError("Could not create user, please try again", 500);
+    return next(error);
+}
+
     const createdUser = new User ({
         name,
         email,
         image: "https://thelaughingcake.com/wp-content/uploads/2023/12/TheLaughingCakePC.png",
-        password
+        password: hashedPassword
     });
 
     try {
@@ -51,7 +62,19 @@ if (existingUser) {
         return next(error);
     }
 
-    res.status(201).json({ user: createdUser.toObject({getters: true}) });
+    let token;
+    try {
+    token = jwt.sign(
+        {userId: createdUser.id, email: createdUser.email}, 
+        "supersecret_dont_share", 
+        {expiresIn: "1h" }
+        );
+    } catch(err) {
+        const error = new HttpError("Signing up failed, please try again later", 500);
+        return next(error);
+    }
+
+    res.status(201).json({ user: createdUser.id, email: createdUser.email, token: token });
 };
 
 const login = async (req, res, next) => {
@@ -65,12 +88,42 @@ const login = async (req, res, next) => {
         return next(error);
     }
 
-    if(!existingUser || existingUser.password !== password) {
+    if(!existingUser) {
         const error = new HttpError("Invalidad credentials, could not log you in", 401);
         return next(error);
     }
 
-    res.json({message: "Logged In"});
+    let isValidPassword = false;
+    try {
+        isValidPassword = await bcrypt.compare(password, existingUser.password);
+    }
+    catch(err) {
+        const error = new HttpError("Could not log you in, please check your credentials and try again", 500);
+        return next(error);
+    }
+
+    if(!isValidPassword) {
+        const error = new HttpError("Invalidad credentials, could not log you in", 401);
+        return next(error);
+    }
+    
+    let token;
+    try {
+    token = jwt.sign(
+        {userId: existingUser.id, email: existingUser.email}, 
+        "supersecret_dont_share", // this token should be the same as the one on signgup by the way 
+        { expiresIn: "1h" }
+        );
+    } catch(err) {
+        const error = new HttpError("Logging in failed, please try again later", 500);
+        return next(error);
+    }
+
+    res.json({
+     userId: existingUser.id,
+     email: existingUser.email,
+     token: token
+    });
 };
 
 exports.getUsers = getUsers;

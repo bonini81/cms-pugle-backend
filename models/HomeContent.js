@@ -13,14 +13,12 @@ const homeContentSchema = new Schema({
             titleGallery: String,
             titleContact: String,
             subTitleContact: String,
-            required: true,
         },
     experienceContent: [
             {
                 item: String,
                 icon: Number,
                 link: String,
-                required: true,
             }
         ],
         
@@ -29,7 +27,6 @@ const homeContentSchema = new Schema({
                 item: String,
                 icon: Number,
                 link: String,
-                required: true,
             }
         ]
       

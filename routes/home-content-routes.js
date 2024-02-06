@@ -5,8 +5,8 @@ const express = require("express");
 
 const router = express.Router();
 
-router.get("/", usersController.getUsers);
+// router.get("/", usersController.getUsers);
 
-router.post("/new", usersController.signup);
+router.post("/new", homeContentController.postHomeContent);
 
 module.exports = router;

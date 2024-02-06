@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 require("dotenv").config();
 const placesRoutes = require("./routes/places-routes");
 const usersRoutes = require("./routes/users-routes");
+const homeContentRoutes = require("./routes/home-content-routes");
 const HttpError = require("./models/http-error");
 
 const app = express();
@@ -22,6 +23,8 @@ app.use((req, res, next) => {
 })
 
 app.use("/api/users", usersRoutes);
+
+app.use("/api/homeContent", homeContentRoutes);
 
 app.use((req, res, next) => {
     if(res.headerSent) {

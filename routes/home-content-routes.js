@@ -5,7 +5,7 @@ const express = require("express");
 
 const router = express.Router();
 
-// router.get("/", usersController.getUsers);
+router.get("/", homeContentController.getHomeContent);
 
 router.post("/new", homeContentController.postHomeContent);
 

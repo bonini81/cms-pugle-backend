@@ -28,7 +28,13 @@ const homeContentSchema = new Schema({
                 icon: Number,
                 link: String,
             }
-        ]
+        ],
+            heroContent: 
+            {
+                title1: String,
+                subtitle1: String,
+                subtitle2: String
+            }
       
 });
 

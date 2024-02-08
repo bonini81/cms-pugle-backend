@@ -1,7 +1,6 @@
 const express = require("express");
-// const { check } = require("express-validator");
 
- const homeContentController = require("../controllers/home-content-controllers");
+const homeContentController = require("../controllers/home-content-controllers");
 
 const router = express.Router();
 

@@ -2,7 +2,6 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 require("dotenv").config();
-const placesRoutes = require("./routes/places-routes");
 const usersRoutes = require("./routes/users-routes");
 const homeContentRoutes = require("./routes/home-content-routes");
 const portfolioContentRoutes = require("./routes/portfolio-routes");
@@ -38,9 +37,6 @@ app.use((req, res, next) => {
     const error = new HttpError("Could not find this route", 404);
     throw error;
 });
-
-//MiddleWare
-app.use(placesRoutes);
 
 mongoose
 .connect(

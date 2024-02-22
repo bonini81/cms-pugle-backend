@@ -3,9 +3,23 @@ const PortfolioModel = require("../models/portfolio");
 
 const postPortfolioContent = async (req, res, next) => {
 
-   let portfolioContent = req.body;
+ const  {  image, alt, title, category, description, linkTo, linkToText, hrefTo } = req.body;
+ // const  { image } = req.file;
 
-    const createdPortfolioContent = new PortfolioModel(portfolioContent);
+    const createdPortfolioContent = new PortfolioModel({
+        image,
+        alt,
+        title,
+        category,
+        description,
+        linkTo,
+        linkToText,
+        hrefTo
+    });
+    console.log("req");
+
+    console.log(req.file);
+    console.log(req.body);
 
     try {
        await createdPortfolioContent.save();

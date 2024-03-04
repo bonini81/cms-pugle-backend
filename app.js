@@ -2,6 +2,7 @@
 
 const express = require("express");
 const bodyParser = require("body-parser");
+const cors = require("cors");
 const mongoose = require("mongoose");
 require("dotenv").config();
 const usersRoutes = require("./routes/users-routes");
@@ -11,6 +12,15 @@ const HttpError = require("./models/http-error");
 
 const app = express();
 const db_uri =process.env.DB_URI;
+
+// const corsOrigin = "http://localhost:3000";
+/** app.use(cors({
+  origin:corsOrigin,
+  methods:['GET','POST'],
+  credentials: true 
+})); */ 
+
+app.use(cors());
 
 app.use(bodyParser.json());
 

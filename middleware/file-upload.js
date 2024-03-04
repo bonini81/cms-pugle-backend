@@ -1,5 +1,5 @@
 const multer = require("multer");
-const uuid = require("uuid").v4; // Tutorial uses v1
+const uuid = require("uuid").v4;
 
 const MIME_TYPE_MAP = {
     "image/png": "png",
@@ -7,11 +7,12 @@ const MIME_TYPE_MAP = {
     "image/jpg": "jpg",
 };
 
-const fileUpload = multer({
+ const fileUpload = multer({
     limits: 500000,
     storage: multer.diskStorage({
         destination: (req, file, cb) => {
             cb(null, "uploads/images");
+            
         },
         filename: (req, file, cb) => {
            const ext = MIME_TYPE_MAP[file.mimetype]; 
@@ -23,6 +24,7 @@ const fileUpload = multer({
        let error = isValid ? null : new Error("Invalid mime type");
        cb(error, isValid);
     }
-});
+}); 
+
 
 module.exports = fileUpload;

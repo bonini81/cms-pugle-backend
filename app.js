@@ -1,4 +1,5 @@
-// const fs = require("fs");
+// const path = require("path");
+
 
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -33,6 +34,8 @@ app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE");
     next();
 });
+
+// app.use("/uploads/images", express.static(path.join("uploads", "images")));
 
 app.use("/api/users", usersRoutes);
 

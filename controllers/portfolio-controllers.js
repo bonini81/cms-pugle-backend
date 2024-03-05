@@ -3,12 +3,28 @@ const PortfolioModel = require("../models/portfolio");
 
 const postPortfolioContent = async (req, res, next) => {
 
-   let portfolioContent = req.body;
+ const  { image, alt, title, category, description, linkTo, linkToText, hrefTo } = req.body;
+ // const image  = req.file.path;
+  // console.log("image");
+  //console.log(image);
 
-    const createdPortfolioContent = new PortfolioModel(portfolioContent);
+    const createdPortfolioContent = new PortfolioModel({
+        image,
+        alt,
+        title,
+        category,
+        description,
+        linkTo,
+        linkToText,
+        hrefTo
+    });
+
+   // console.log(req);
+    // console.log(req.body);
 
     try {
        await createdPortfolioContent.save();
+ 
     } catch(err) {
         const error = new HttpError("Creating home content failed, please try again", 500);
         return next(error);

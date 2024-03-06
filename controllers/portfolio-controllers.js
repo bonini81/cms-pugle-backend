@@ -47,5 +47,29 @@ const getPortfolioContent = async (req, res, next) => {
 
 }
 
+const findPortfolioContentByTitle = async (req, res, next) => {
+    const { title } = req.body;
+
+    let portfolioItem;
+    try {
+        portfolioItem = await PortfolioModel.findOne({title:title});
+    } catch(err) {
+        const error = new HttpError("Looking for the portfolio item failed", 500);
+        return next(error);
+    }
+
+    res.json({
+     title: portfolioItem.title,
+     image: portfolioItem.image,
+     category: portfolioItem.category,
+     alt: portfolioItem.alt,
+     description: portfolioItem.description,
+     linkTo: portfolioItem.linkTo,
+     linkToText: portfolioItem.linkToText,
+     hrefTo: portfolioItem.hrefTo
+    });
+};
+
 exports.postPortfolioContent = postPortfolioContent;
 exports.getPortfolioContent = getPortfolioContent;
+exports.findPortfolioContentByTitle = findPortfolioContentByTitle;

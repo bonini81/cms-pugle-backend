@@ -9,4 +9,6 @@ const router = express.Router();
  
 router.get("/", portfolioController.getPortfolioContent);
 
+router.get("/item", portfolioController.findPortfolioContentByTitle);
+
 module.exports = router;

@@ -5,10 +5,10 @@ const portfolioController = require("../controllers/portfolio-controllers");
 
 const router = express.Router();
 
- router.post("/new", fileUpload.single("image"), portfolioController.postPortfolioContent);
+ router.post("/new", fileUpload.single("img"), portfolioController.postPortfolioContent);
  
 router.get("/", portfolioController.getPortfolioContent);
 
-router.get("/item", portfolioController.findPortfolioContentByTitle);
+router.get("/item/:key", portfolioController.findPortfolioContentByTitle);
 
 module.exports = router;

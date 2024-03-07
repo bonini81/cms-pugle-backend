@@ -48,11 +48,10 @@ const getPortfolioContent = async (req, res, next) => {
 }
 
 const findPortfolioContentByTitle = async (req, res, next) => {
-    const { title } = req.body;
-
+    const { key } = req.params;
     let portfolioItem;
     try {
-        portfolioItem = await PortfolioModel.findOne({title:title});
+        portfolioItem = await PortfolioModel.findOne({key:key});
     } catch(err) {
         const error = new HttpError("Looking for the portfolio item failed", 500);
         return next(error);
@@ -60,13 +59,14 @@ const findPortfolioContentByTitle = async (req, res, next) => {
 
     res.json({
      title: portfolioItem.title,
-     image: portfolioItem.image,
+     img: portfolioItem.img,
      category: portfolioItem.category,
      alt: portfolioItem.alt,
      description: portfolioItem.description,
      linkTo: portfolioItem.linkTo,
      linkToText: portfolioItem.linkToText,
-     hrefTo: portfolioItem.hrefTo
+     hrefTo: portfolioItem.hrefTo,
+     key: key
     });
 };
 

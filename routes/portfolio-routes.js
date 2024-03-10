@@ -11,4 +11,6 @@ router.get("/", portfolioController.getPortfolioContent);
 
 router.get("/item/:key", portfolioController.findPortfolioContentByTitle);
 
+router.delete("/item-delete/:key", portfolioController.deletePortfolioContentByTitle);
+
 module.exports = router;

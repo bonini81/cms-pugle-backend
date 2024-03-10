@@ -3,30 +3,28 @@ const PortfolioModel = require("../models/portfolio");
 
 const postPortfolioContent = async (req, res, next) => {
 
- const  { image, alt, title, category, description, linkTo, linkToText, hrefTo } = req.body;
+ const  { img, alt, title, category, description, linkTo, linkToText, hrefTo, key } = req.body;
  // const image  = req.file.path;
   // console.log("image");
   //console.log(image);
 
     const createdPortfolioContent = new PortfolioModel({
-        image,
+        img,
         alt,
         title,
         category,
         description,
         linkTo,
         linkToText,
-        hrefTo
+        hrefTo,
+        key
     });
-
-   // console.log(req);
-    // console.log(req.body);
 
     try {
        await createdPortfolioContent.save();
  
     } catch(err) {
-        const error = new HttpError("Creating home content failed, please try again", 500);
+        const error = new HttpError("Creating portfolio content failed, please try again", err, 500);
         return next(error);
     }
 
@@ -70,6 +68,23 @@ const findPortfolioContentByTitle = async (req, res, next) => {
     });
 };
 
+
+ const deletePortfolioContentByTitle = async (req, res, next) => {
+    const { key } = req.params;
+    let content;
+    try {
+        content = await PortfolioModel.deleteOne({key:key});
+        
+    }
+    catch {
+        const error = new HttpError("Fetching home content failed, please try again later", 500);
+        return next(error);
+    }
+    res.status(201).json({ message: "Deleted portfolio content successfully!"} );
+
+}
+
 exports.postPortfolioContent = postPortfolioContent;
 exports.getPortfolioContent = getPortfolioContent;
+exports.deletePortfolioContentByTitle = deletePortfolioContentByTitle;
 exports.findPortfolioContentByTitle = findPortfolioContentByTitle;

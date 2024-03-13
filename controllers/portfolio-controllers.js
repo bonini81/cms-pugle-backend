@@ -69,7 +69,7 @@ const findPortfolioContentByTitle = async (req, res, next) => {
 };
 
 
- const deletePortfolioContentByTitle = async (req, res, next) => {
+ const deletePortfolioContentByKey = async (req, res, next) => {
     const { key } = req.params;
     let content;
     try {
@@ -84,7 +84,43 @@ const findPortfolioContentByTitle = async (req, res, next) => {
 
 }
 
+const editPortfolioContentByKey = async (req, res, next) => {
+    
+    const  { img, alt, title, category, description, linkTo, linkToText, hrefTo, key } = req.body;
+    const idKey = req.params.key;
+
+    let content;
+    try {
+        content = await PortfolioModel.findOne({key: idKey}); 
+    }
+    catch {
+        const error = new HttpError("Fetching home content failed, please try again later", 500);
+        return next(error);
+    }
+    content.img = img;
+    content.alt = alt;
+    content.title = title;
+    content.category = category;
+    content.description = description;
+    content.linkTo = linkTo;
+    content.linkToText = linkToText;
+    content.hrefTo = hrefTo;
+    // content.key = key;
+
+    try {
+        await content.save();
+    }catch(err) {
+        const error = new HttpError("Updating portfolio content failed, please try again", 500);
+        return next(error);
+    }
+
+    res.status(201).json({ message: "Updated portfolio item successfully!",
+        portfolioContent: content.toObject({getters: true})} );
+
+}
+
 exports.postPortfolioContent = postPortfolioContent;
 exports.getPortfolioContent = getPortfolioContent;
-exports.deletePortfolioContentByTitle = deletePortfolioContentByTitle;
+exports.deletePortfolioContentByKey = deletePortfolioContentByKey;
 exports.findPortfolioContentByTitle = findPortfolioContentByTitle;
+exports.editPortfolioContentByKey = editPortfolioContentByKey;

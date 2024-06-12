@@ -18,5 +18,7 @@ router.post("/signup",[
 ], usersController.signup);
 
 router.post("/login", usersController.login);
+router.delete("/user-delete/:key", usersController.deleteUserByKey);
+
 
 module.exports = router;

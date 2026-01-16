@@ -39,9 +39,16 @@ app.use("/api/users", usersRoutes);
 
 app.use("/api/homeContent", homeContentRoutes);
 
-app.use("/api/portfolioContent", portfolioContentRoutes );
+app.use("/api/portfolioContent", portfolioContentRoutes);
 
+// 404 handler 
 app.use((req, res, next) => {
+    const error = new HttpError("Could not find this route", 404);
+    return next(error);
+});
+
+// General Error handler 
+app.use((error, req, res, next) => {
 
   /*  if (req.file) {
         fs.unlink(req.file.path, err => {
@@ -49,13 +56,11 @@ app.use((req, res, next) => {
         }); 
     } */
 
-    if(res.headerSent) {
+    if(res.headersSent) {
         return next(error);
     }
     res.status(error.code || 500);
     res.json({message: error.message || "An unknown error occurred!"});
-    const error = new HttpError("Could not find this route", 404);
-    throw error;
 });
 
 mongoose
@@ -63,6 +68,7 @@ mongoose
     db_uri
 )
 .then(()=>{
-    app.listen(5000);
+    const port = process.env.PORT || 5000;
+    app.listen(port);
 })
 .catch( err => console.log(err));
